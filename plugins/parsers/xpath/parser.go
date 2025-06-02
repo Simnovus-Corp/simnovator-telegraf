@@ -210,7 +210,7 @@ func (p *Parser) Parse(buf []byte) ([]telegraf.Metric, error) {
 
 	// Queries
 	metrics := make([]telegraf.Metric, 0)
-	p.Log.Debugf("Number of configs: %d", len(p.Configs))
+	// p.Log.Debugf("Number of configs: %d", len(p.Configs))
 	for _, cfg := range p.Configs {
 		selectedNodes, err := p.document.QueryAll(doc, cfg.Selection)
 		if err != nil {
@@ -220,7 +220,7 @@ func (p *Parser) Parse(buf []byte) ([]telegraf.Metric, error) {
 			p.debugEmptyQuery("metric selection", doc, cfg.Selection)
 			return metrics, errors.New("cannot parse with empty selection node")
 		}
-		p.Log.Debugf("Number of selected metric nodes: %d", len(selectedNodes))
+		// p.Log.Debugf("Number of selected metric nodes: %d", len(selectedNodes))
 
 		for _, selected := range selectedNodes {
 			m, err := p.parseQuery(t, doc, selected, cfg)
@@ -311,7 +311,7 @@ func (p *Parser) parseQuery(starttime time.Time, doc, selected dataNode, cfg Con
 		if err != nil {
 			return nil, err
 		}
-		p.Log.Debugf("Number of selected tag nodes: %d", len(selectedTagNodes))
+		// p.Log.Debugf("Number of selected tag nodes: %d", len(selectedTagNodes))
 		if len(selectedTagNodes) > 0 && selectedTagNodes[0] != nil {
 			for _, selectedtag := range selectedTagNodes {
 				n, err := p.executeQuery(doc, selectedtag, tagnamequery)
@@ -397,7 +397,7 @@ func (p *Parser) parseQuery(starttime time.Time, doc, selected dataNode, cfg Con
 		if err != nil {
 			return nil, err
 		}
-		p.Log.Debugf("Number of selected field nodes: %d", len(selectedFieldNodes))
+		// p.Log.Debugf("Number of selected field nodes: %d", len(selectedFieldNodes))
 		if len(selectedFieldNodes) > 0 && selectedFieldNodes[0] != nil {
 			for _, selectedfield := range selectedFieldNodes {
 				n, err := p.executeQuery(doc, selectedfield, fieldnamequery)
