@@ -1,0 +1,29 @@
+# Dockerfile.build
+
+FROM golang:1.24-bullseye
+
+WORKDIR /telegraf
+
+# Install build tools
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    ca-certificates \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+
+# Copy only the Go module files to cache dependencies
+COPY go.mod go.sum ./
+
+# Download Go modules (will be cached if go.mod and go.sum are unchanged)
+RUN go mod tidy
+
+# Copy the rest of the source code
+COPY . .
+
+# Set build tags
+ARG TAGS="custom,inputs.websocket,inputs.kafka_consumer,outputs.kafka,outputs.elasticsearch,outputs.postgresql,outputs.websocket,outputs.file,parsers.xpath,parsers.json,parsers.json_v2,parsers.influx,processors.date,processors.timestamp,serializers.json"
+
+# Build Telegraf binary with plugins
+RUN go build -tags "$TAGS"  -o /telegraf/telegraf ./cmd/telegraf
+
