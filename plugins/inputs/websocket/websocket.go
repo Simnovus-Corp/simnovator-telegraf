@@ -230,20 +230,6 @@ func (w *WebSocketInput) connect() error {
 	}
 	w.conn = conn
 
-	if w.TriggerBody != "" {
-		msgType := ws.BinaryMessage
-		if w.UseTextFrames {
-			msgType = ws.TextMessage
-		}
-
-		w.Log.Infof("Sending trigger body: %s", w.TriggerBody)
-		w.writeMu.Lock()
-		if err := w.conn.WriteMessage(msgType, []byte(w.TriggerBody)); err != nil {
-			return fmt.Errorf("failed to send trigger: %w", err)
-		}
-		w.writeMu.Unlock()
-		w.Log.Infof("Trigger body sent")
-	}
 
 	return nil
 }
@@ -282,6 +268,7 @@ func (w *WebSocketInput) readLoop() {
 			for _, m := range metrics {
 				if len(m.Fields()) > 0 {
 					m.AddField("arrival_date", time.Now().Format("2006-01-02 15:04:05.000"))
+        	m.SetTime(time.Now().Truncate(time.Second))
 				} else {
 					w.Log.Debugf("Dropped metric with no fields: name=%s, tags=%v", m.Name(), m.Tags())
 				}
