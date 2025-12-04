@@ -45,6 +45,10 @@ type ReadWaitCloser struct {
 	wg         sync.WaitGroup
 }
 
+type Duration struct {
+	Duration time.Duration
+}
+
 func FormatFullVersion() string {
 	var parts = []string{"Telegraf"}
 
